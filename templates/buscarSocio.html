@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% comment %} {% block main %}
+<h1>Realizar Lectura</h1>
+<div>
+    <form action="" method="post">{% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Buscar">
+    </form>
+    
+</div>
+<table>
+    <tr>
+        <td>CODIGO</td>
+        <td>NOMBRE</td>
+        <td>APELLIDO</td>
+        <td>CI</td>
+        <td>DIRECCION</td>
+    </tr>
+    {% for socio in socios %}
+    <tr>
+        <td>{{socio.codigo}}</td>
+        <td>{{socio.nombre}}</td>
+        <td>{{socio.apellido}}</td>
+        <td>{{socio.ci}}</td>
+        <td>{{socio.direccion}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock main %} {% endcomment %}

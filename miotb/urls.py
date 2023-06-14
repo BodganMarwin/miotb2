@@ -20,5 +20,7 @@ from applectura import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('buscarSocio/',views.buscarSocio)
+    path('buscarSocio/',views.buscarSocio),
+    path('realizarLectura/<int:pk>/',views.realizarLectura, name='realizarLectura'),
+    path('validarLectura/<int:pk>/',views.validarLectura, name='validarLectura'),
 ]

@@ -33,23 +33,29 @@ def realizarLectura(request, pk):
     } )
     if (request.method=='POST'): #Verificamos que el formulario haya sido enviado mediante mettdo POST
         if (anterior<=int(request.POST['actual'])): #Verificaomos que el valor de lectura anterior sea menor o igual a la lectura actual
+            
             form =realizarLecturaForm(request.POST) #Cargamos todos los datos a form
-            if form.is_valid(): #Verificamos que todos los campos tegan valores validos
+            if form.is_valid: #Verificamos que todos los campos tegan valores validos
+                print('es valido')
                 lectura = Lectura()
-                lectura.anterior=form.cleaned_data['anterior']
-                lectura.actual=form.cleaned_data['actual']
-                lectura.consumo=lectura.actual-lectura.anterior
-                lectura.pagoconsumo=calcularConsumo(lectura.actual,lectura.anterior)
+                lectura.anterior=anterior
+                lectura.actual=request.POST['actual']
+                lectura.consumo=float(request.POST['actual'])-anterior
+                lectura.pagoconsumo=calcularConsumo(float(lectura.actual),float(lectura.anterior))
                 lectura.multa=calcularMulta()
-                lectura.fecha=form.cleaned_data['fecha']
-                lectura.mes=form.cleaned_data['mes']
-                lectura.anio=form.cleaned_data['anio']
+                lectura.pagototal=lectura.pagoconsumo+lectura.multa
+                lectura.fecha=date.today()
+                lectura.mes=mes
+                lectura.anio=anio
                 lectura.estado=False
-                lectura.socio=form.cleaned_data['socio']
-                return render(request, 'imprimirLectura.html', {'lectura':lectura})
+                lectura.socio=socio
+                try:
+                    vericarlectura = Lectura.objects.get(socio=lectura.socio,anio=lectura.anio,mes=lectura.mes)
+                except Lectura.DoesNotExist:
+                    lectura.save()
+                    return redirect('imprimirLectura',pk=lectura.id)
         else:
-            alerta = 'btn-close'
-
+            print('no es valido')
     return render(request,'realizarLectura.html',{'form':form, 'socio':socio})
 
 def validarLectura(request,pk):
@@ -61,6 +67,11 @@ def validarLectura(request,pk):
             })
             if form.is_valid():
                 return render(request,'mipoup.html',{'form':form})
+
+def imprimirLectura(request,pk):
+    lectura = Lectura.objects.get(id=pk)
+    socio = Socio.objects.get(id=lectura.socio.id)
+    return render(request, 'imprimirLectura.html',{'lectura':lectura,'socio':socio})
 
 def lecturaAnterior(pk):
     mesAnt=mesAnterior(date.today().month-1)

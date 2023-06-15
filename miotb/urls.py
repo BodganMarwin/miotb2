@@ -23,4 +23,5 @@ urlpatterns = [
     path('buscarSocio/',views.buscarSocio),
     path('realizarLectura/<int:pk>/',views.realizarLectura, name='realizarLectura'),
     path('validarLectura/<int:pk>/',views.validarLectura, name='validarLectura'),
+    path('imprimirLectura/<int:pk>/',views.imprimirLectura, name='imprimirLectura'),
 ]

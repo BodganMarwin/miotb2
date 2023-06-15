@@ -31,7 +31,7 @@ def realizarLectura(request, pk):
         'anio':anio,
         'socio':socio
     } )
-    if request.method=='POST':
+    if ((request.method=='POST') and (anterior<=int(request.POST['actual']))):
         form =realizarLecturaForm(request.POST)
         if form.is_valid():
             lectura = Lectura()
@@ -41,7 +41,6 @@ def realizarLectura(request, pk):
             lectura.mes=form.cleaned_data['mes']
             lectura.anio=form.cleaned_data['anio']
             lectura.socio=form.cleaned_data['socio']
-
     return render(request,'realizarLectura.html',{'form':form, 'socio':socio})
 
 def validarLectura(request,lectura):

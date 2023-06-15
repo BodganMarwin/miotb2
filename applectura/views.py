@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from applectura.forms import buscarSocioForm, realizarLecturaForm
+from applectura.forms import buscarSocioForm, realizarLecturaForm, lecturaForm
 from appsocio.models import Socio
 from applectura.models import Lectura
 from datetime import date
@@ -31,20 +31,36 @@ def realizarLectura(request, pk):
         'anio':anio,
         'socio':socio
     } )
-    if ((request.method=='POST') and (anterior<=int(request.POST['actual']))):
-        form =realizarLecturaForm(request.POST)
-        if form.is_valid():
-            lectura = Lectura()
-            lectura.anterior=form.cleaned_data['anterior']
-            lectura.actual=form.cleaned_data['actual']
-            lectura.fecha=form.cleaned_data['fecha']
-            lectura.mes=form.cleaned_data['mes']
-            lectura.anio=form.cleaned_data['anio']
-            lectura.socio=form.cleaned_data['socio']
+    if (request.method=='POST'): #Verificamos que el formulario haya sido enviado mediante mettdo POST
+        if (anterior<=int(request.POST['actual'])): #Verificaomos que el valor de lectura anterior sea menor o igual a la lectura actual
+            form =realizarLecturaForm(request.POST) #Cargamos todos los datos a form
+            if form.is_valid(): #Verificamos que todos los campos tegan valores validos
+                lectura = Lectura()
+                lectura.anterior=form.cleaned_data['anterior']
+                lectura.actual=form.cleaned_data['actual']
+                lectura.consumo=lectura.actual-lectura.anterior
+                lectura.pagoconsumo=calcularConsumo(lectura.actual,lectura.anterior)
+                lectura.multa=calcularMulta()
+                lectura.fecha=form.cleaned_data['fecha']
+                lectura.mes=form.cleaned_data['mes']
+                lectura.anio=form.cleaned_data['anio']
+                lectura.estado=False
+                lectura.socio=form.cleaned_data['socio']
+                return render(request, 'imprimirLectura.html', {'lectura':lectura})
+        else:
+            alerta = 'btn-close'
+
     return render(request,'realizarLectura.html',{'form':form, 'socio':socio})
 
-def validarLectura(request,lectura):
-    return render(request,'.html',{'form':form})
+def validarLectura(request,pk):
+    if request.method == 'POST':
+        if int(request.POST['anterior'])<=int(request.POST['actual']):
+            socio = Socio.objects.get(id=pk)
+            form = lecturaForm(request.POST,initial={
+                'socio':socio,
+            })
+            if form.is_valid():
+                return render(request,'mipoup.html',{'form':form})
 
 def lecturaAnterior(pk):
     mesAnt=mesAnterior(date.today().month-1)
@@ -74,3 +90,21 @@ def anioMes(mes):
     anio=date.today().year
     if mes<=0:anio-=1
     return anio
+def calcularConsumo(actual, anterior):
+    consumo = actual - anterior
+    monto = 15
+    if consumo>15 and consumo<=20:
+        res = consumo - 15
+        monto = monto + 3*res
+    elif consumo>20:
+        res = consumo - 20
+        monto = 30 + res*5 
+    return monto
+def calcularMulta():
+    multa=0
+    mesM=mesAnterior(date.today().month-2)
+    anioM=anioMes(date.today().month-2)
+    lectura = Lectura.objects.get(anio=anioM,mes=mesM)
+    if lectura.estado==False:
+        multa=15
+    return multa

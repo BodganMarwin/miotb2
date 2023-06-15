@@ -29,7 +29,7 @@
                     </div>
                     {% endfor %}
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                        <button type="submit" class="btn btn-primary" onclick="return confirmacion()">Aceptar</button>
                         <button type="reset" class="btn btn-secondary">Reset</button>
                     </div>
                 </form>
@@ -38,3 +38,14 @@
     </div>
 </section>
 {% endblock %}
+<script>
+    function confirmacion(){
+        var respuesta = confirm('Desea guardar los datos?');
+        if (respuesta == true){
+            return true
+        }
+        else{
+            return false
+        }
+    }
+</script>

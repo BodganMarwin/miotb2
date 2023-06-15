@@ -43,3 +43,8 @@ class realizarLecturaForm(forms.Form):
     # class Meta:
     #     model=Lectura
     #     fields=('anterior','actual','fecha','mes','anio','socio')
+
+class lecturaForm(forms.ModelForm):
+    class Meta:
+        model=Lectura
+        fields=('anterior','actual','consumo','pagoconsumo','multa','pagototal','fecha','mes','anio','estado','socio')

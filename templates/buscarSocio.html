@@ -15,6 +15,7 @@
     <div class="col-lg-6">
         <div class="card">
             <div class="card-body">
+                <h5 class="card-title text-center">{{ mes }} - {{ anio }}</h1>
                 <h5 class="card-title">Buscar Socio</h5>
                 <form class="row g-3" action="" method="post">{% csrf_token %}
                     {% for field in form %}

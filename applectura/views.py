@@ -5,18 +5,22 @@ from applectura.models import Lectura
 from datetime import date
 # Create your views here.
 
-def buscarSocio(request):
+def buscarSocio(request,ms):
     form = buscarSocioForm()
     allsocios = Socio.objects.all()
-
-    if request.method == 'POST':
+    mes = mesAnterior(date.today().month)
+    anio = anioMes(date.today().month)
+    if request.method == 'POST' and ms==0:
         form = buscarSocioForm(request.POST)
         if form.is_valid:
             id = request.POST['codigo']
-            return redirect('realizarLectura', pk=id)
-        else:
-            print('invalido')
-    return render(request, 'buscarSocio.html',{'socios':allsocios,'form':form})
+            socio = Socio.objects.get(id=id)
+            try:
+                Lectura.objects.get(socio=socio,anio=anio,mes=mes)
+                return render(request, 'buscarSocio.html',{'socios':allsocios,'form':form, 'mensaje':1,'mes':mes,'anio':anio})
+            except Lectura.DoesNotExist:
+                return redirect('realizarLectura', pk=id)
+    return render(request, 'buscarSocio.html',{'socios':allsocios,'form':form, 'mensaje':ms,'mes':mes,'anio':anio})
 
 def realizarLectura(request, pk):
     socio = Socio.objects.get(id=pk)
@@ -33,7 +37,6 @@ def realizarLectura(request, pk):
     } )
     if (request.method=='POST'): #Verificamos que el formulario haya sido enviado mediante mettdo POST
         if (anterior<=int(request.POST['actual'])): #Verificaomos que el valor de lectura anterior sea menor o igual a la lectura actual
-            
             form =realizarLecturaForm(request.POST) #Cargamos todos los datos a form
             if form.is_valid: #Verificamos que todos los campos tegan valores validos
                 print('es valido')
@@ -50,12 +53,11 @@ def realizarLectura(request, pk):
                 lectura.estado=False
                 lectura.socio=socio
                 try:
-                    vericarlectura = Lectura.objects.get(socio=lectura.socio,anio=lectura.anio,mes=lectura.mes)
+                    Lectura.objects.get(socio=lectura.socio,anio=lectura.anio,mes=lectura.mes)
+                    return redirect('buscarSocio', ms=2)
                 except Lectura.DoesNotExist:
                     lectura.save()
                     return redirect('imprimirLectura',pk=lectura.id)
-        else:
-            print('no es valido')
     return render(request,'realizarLectura.html',{'form':form, 'socio':socio})
 
 def validarLectura(request,pk):

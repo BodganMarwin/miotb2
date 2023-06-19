@@ -1,0 +1,36 @@
+{% extends "base2.html" %}
+
+{% block main %}
+<div class="pagetitle">
+    <h1>Lectura</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="">Inicio</a></li>
+        <li class="breadcrumb-item">Georeferencia</li>
+        <li class="breadcrumb-item active">Crear</li>
+      </ol>
+    </nav>
+</div><!-- End Page Title -->
+<section class="section row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-center">{{ mes }} - {{ anio }}</h1>
+                <h5 class="card-title">Nueva Cliente</h5>
+                <form class="row g-3" action="" method="post">{% csrf_token %}
+                    {% for field in form %}
+                    <div class="col-12">
+                        <label class="form-label" for="{{ field.auto_id }}">{{field.label}}</label>
+                        {{ field }}
+                    </div>
+                    {% endfor %}
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Crear</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock main %}

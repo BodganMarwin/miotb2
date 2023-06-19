@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from applectura import views
+from apptroncal.views import crearCliente,crearServicio,crearGeo
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +25,7 @@ urlpatterns = [
     path('realizarLectura/<int:pk>/',views.realizarLectura, name='realizarLectura'),
     path('validarLectura/<int:pk>/',views.validarLectura, name='validarLectura'),
     path('imprimirLectura/<int:pk>/',views.imprimirLectura, name='imprimirLectura'),
+    path('crearGeo/', crearGeo, name='crearGeo'),
+    path('crearCliente/', crearCliente, name='crearCliente'),
+    path('crearServicio/', crearServicio, name='crearServicio'),
 ]

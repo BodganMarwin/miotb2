@@ -11,10 +11,10 @@ def crearGeo(request):
         if form.is_valid():
             geo = Georeferencias()
             geo.punto = request.POST['punto']
-            geo.linea = request.POST['linea']
+            # geo.linea = request.POST['linea']
             geo.poligono = request.POST['poligono']
             geo.multipunto = request.POST['multipunto']
-            geo.multilinea = request.POST['multilinea']
+            # geo.multilinea = request.POST['multilinea']
             geo.multipoligono = request.POST['multipoligono']
             geo.save()
             return redirect('crearGeo')

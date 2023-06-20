@@ -5,7 +5,7 @@ from django.contrib.gis.db import models
 
 class Georeferencias(models.Model):
     punto = models.PointField(srid=4326, blank=True, null=True)
-    linea = models.LineStringField(srid=4326, blank=True, null=True)
+    # linea = models.LineStringField(srid=4326, blank=True, null=True)
     poligono = models.PolygonField(srid=4326, blank=True, null=True)
     multipunto = models.MultiPointField(srid=4326, blank=True, null=True)
     # multilinea= models.MultiLineStringField(srid=4326, blank=True, null=True)

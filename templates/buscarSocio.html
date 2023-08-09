@@ -7,7 +7,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="">Inicio</a></li>
         <li class="breadcrumb-item">Realizar Lectura</li>
-        <li class="breadcrumb-item active">Buscar Socio</li>
+        <li class="breadcrumb-item active">Consultar Socio</li>
       </ol>
     </nav>
 </div><!-- End Page Title -->
@@ -15,8 +15,7 @@
     <div class="col-lg-6">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title text-center">{{ mes }} - {{ anio }}</h1>
-                <h5 class="card-title">Buscar Socio</h5>
+                <h5 class="card-title">Consultar Socio</h5>
                 <form class="row g-3" action="" method="post">{% csrf_token %}
                     {% for field in form %}
                     <div class="col-12">
@@ -25,8 +24,8 @@
                     </div>
                     {% endfor %}
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Buscar</button>
-                        <button type="reset" class="btn btn-secondary">Reset</button>
+                        <button type="submit" class="btn btn-primary">Consultar</button>
+                        <button type="reset" class="btn btn-secondary">Limpiar</button>
                     </div>
                 </form>
             </div>

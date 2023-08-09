@@ -1,70 +1,104 @@
+from typing import Any
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
-from applectura.forms import buscarSocioForm, realizarLecturaForm, lecturaForm
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
+from applectura.forms import *
 from appsocio.models import Socio
 from applectura.models import Lectura
 from datetime import date
 # Create your views here.
 
-def buscarSocio(request,ms):
+def buscarSocio(request):
     form = buscarSocioForm()
     allsocios = Socio.objects.all()
     mes = mesAnterior(date.today().month)
     anio = anioMes(date.today().month)
-    if request.method == 'POST' and ms==0:
+    if request.method == 'POST':
         form = buscarSocioForm(request.POST)
         if form.is_valid:
             id = request.POST['codigo']
             socio = Socio.objects.get(id=id)
             try:
                 Lectura.objects.get(socio=socio,anio=anio,mes=mes)
-                return render(request, 'buscarSocio.html',{'socios':allsocios,'form':form, 'mensaje':1,'mes':mes,'anio':anio})
+                return render(request, 'buscarSocio.html',{'socios':allsocios,'form':form})
             except Lectura.DoesNotExist:
                 return redirect('realizarLectura', pk=id)
-    return render(request, 'buscarSocio.html',{'socios':allsocios,'form':form, 'mensaje':ms,'mes':mes,'anio':anio})
+    return render(request, 'buscarSocio.html',{'socios':allsocios,'form':form})
+
+class PrimeraLecturaView(CreateView):
+    model = Lectura
+    form_class = PrimeraLecturaForm
+    template_name = 'lectura/primeralectura.html'
+    success_url = reverse_lazy('buscarSocio')
+
+    def get(self, request, *args, **kwargs):
+        print(kwargs['pk'])
+        socio = Socio.objects.get(id=kwargs['pk'])
+        return render(request,self.template_name,{'form':self.form_class,'socio':socio})
 
 def realizarLectura(request, pk):
     socio = Socio.objects.get(id=pk)
-    anterior=lecturaAnterior(pk)
-    fecha = date.today().strftime('%d-%m-%Y')
-    mes = mesAnterior(date.today().month)
-    anio = anioMes(date.today().month)
-    form = realizarLecturaForm(initial={
-        'anterior':anterior,
-        'fecha':fecha,
-        'mes':mes,
-        'anio':anio,
-        'socio':socio
-    } )
-    if (request.method=='POST'): #Verificamos que el formulario haya sido enviado mediante mettdo POST
-        if (anterior<=int(request.POST['actual'])): #Verificaomos que el valor de lectura anterior sea menor o igual a la lectura actual
-            form =realizarLecturaForm(request.POST) #Cargamos todos los datos a form
-            if form.is_valid: #Verificamos que todos los campos tegan valores validos
-                print('es valido')
-                lectura = Lectura()
-                lectura.anterior=anterior
-                lectura.actual=request.POST['actual']
-                lectura.consumo=float(request.POST['actual'])-anterior
-                lectura.pagoconsumo=calcularConsumo(float(lectura.actual),float(lectura.anterior))
-                lectura.multa=calcularMulta()
-                lectura.pagototal=lectura.pagoconsumo+lectura.multa
-                lectura.fecha=date.today()
-                lectura.mes=mes
-                lectura.anio=anio
-                lectura.estado=False
-                lectura.socio=socio
-                try:
-                    Lectura.objects.get(socio=lectura.socio,anio=lectura.anio,mes=lectura.mes)
-                    return redirect('buscarSocio', ms=2)
-                except Lectura.DoesNotExist:
-                    lectura.save()
-                    return redirect('imprimirLectura',pk=lectura.id)
-    return render(request,'realizarLectura.html',{'form':form, 'socio':socio})
+    if Lectura.objects.filter(socio=pk):
+        ultima = ultimaLectura(pk,date.today().year)
+        # lecturas = Lectura.objects.get(socio=pk,anio=2023,mes='JUNIO')
+        # lecturas = Lectura.objects.filter(socio=pk)
+        # for lectura in lecturas:
+        #     print(lectura)
+        # if existenlecturas:
+        #     ultimomes = existenlecturas.mes
+        #     ultimoanio = existenlecturas.anio
+
+        # anterior=ultima.actual
+        fecha = date.today().strftime('%d-%m-%Y')
+        # mes = mesAnterior(date.today().month)
+        # mes = getMes(ultima.mes)
+        mes = mesAnterior(getMes(ultima.mes)+2)
+        if ultima.mes == 'DICIEMBRE':
+            anio = int(ultima.anio)+1
+        else:
+            anio = ultima.anio
+        # anio = anioMes(getMes(ultima.mes))
+        form = realizarLecturaForm(initial={
+            'anterior':ultima.actual,
+            'fecha':fecha,
+            'mes':mes,
+            'anio':anio,
+            'multa':calcularMulta(),
+            'socio':socio,
+        } )
+        if (request.method=='POST'): #Verificamos que el formulario haya sido enviado mediante mettdo POST
+            if (ultima.actual<=int(request.POST['actual'])): #Verificaomos que el valor de lectura anterior sea menor o igual a la lectura actual
+                form =realizarLecturaForm(request.POST) #Cargamos todos los datos a form
+                if form.is_valid: #Verificamos que todos los campos tegan valores validos
+                    print('es valido')
+                    lectura = Lectura()
+                    lectura.anterior=ultima.actual
+                    lectura.actual=request.POST['actual']
+                    lectura.consumo=float(request.POST['actual'])-ultima.actual
+                    lectura.pagoconsumo=calcularConsumo(float(lectura.actual),float(lectura.anterior))
+                    lectura.multa=calcularMulta()
+                    lectura.pagototal=lectura.pagoconsumo+lectura.multa
+                    lectura.fecha=date.today()
+                    lectura.mes=mes
+                    lectura.anio=anio
+                    lectura.estado=False
+                    lectura.socio=socio
+                    try:
+                        Lectura.objects.get(socio=lectura.socio,anio=lectura.anio,mes=lectura.mes)
+                        return redirect('buscarSocio')
+                    except Lectura.DoesNotExist:
+                        lectura.save()
+                        return redirect('imprimirLectura',pk=lectura.id)
+        return render(request,'realizarLectura.html',{'form':form, 'socio':socio})
+    else:
+        return redirect('primeralectura',pk=pk)
 
 def validarLectura(request,pk):
     if request.method == 'POST':
         if int(request.POST['anterior'])<=int(request.POST['actual']):
             socio = Socio.objects.get(id=pk)
-            form = lecturaForm(request.POST,initial={
+            form = LecturaForm(request.POST,initial={
                 'socio':socio,
             })
             if form.is_valid():
@@ -81,10 +115,20 @@ def lecturaAnterior(pk):
     lectura = Lectura.objects.get(socio=pk,anio=anioAnt,mes=mesAnt)
     return lectura.actual
 
+def ultimaLectura(pk,anio):
+    try: 
+        Lectura.objects.filter(socio=pk)
+        lecturas = Lectura.objects.filter(socio=pk,anio=anio)
+        if lecturas:
+            return lecturas.last()
+        else:
+            return ultimaLectura(pk,anio-1)
+    except Lectura.DoesNotExist:
+        return None
+
 def mesAnterior(mes):
     mes = mes-1
-    if mes==1:mes='ENERO'
-    elif mes==2:mes='FEBRERO'
+    if mes==2:mes='FEBRERO'
     elif mes==3:mes='MARZO'
     elif mes==4:mes='ABRIL'
     elif mes==5:mes='MAYO'
@@ -94,8 +138,8 @@ def mesAnterior(mes):
     elif mes==9:mes='SEPTIEMBRE'
     elif mes==10:mes='OCTUBRE'
     elif mes==11:mes='NOVIEMBRE'
-    elif mes==0:mes='DICIEMBRE'
-    else:mes='NOVIEMBRE'
+    elif mes==12:mes='DICIEMBRE'
+    else: mes='ENERO'
     return mes
 
 def anioMes(mes):
@@ -121,3 +165,18 @@ def calcularMulta():
     if lectura.estado==False:
         multa=15
     return multa
+
+def getMes(mes):
+    if mes=='ENERO':mes=1
+    elif mes=='FEBRERO':mes=2
+    elif mes=='MARZO':mes=3
+    elif mes=='ABRIL':mes=4
+    elif mes=='MAYO':mes=5
+    elif mes=='JUNIO':mes=6
+    elif mes=='JULIO':mes=7
+    elif mes=='AGOSTO':mes=8
+    elif mes=='SEPTIEMBRE':mes=9
+    elif mes=='OCTUBRE':mes=10
+    elif mes=='NOVIEMBRE':mes=11
+    elif mes=='DICIEMBRE':mes=12
+    return mes

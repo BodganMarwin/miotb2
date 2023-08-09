@@ -35,6 +35,11 @@ class realizarLecturaForm(forms.Form):
                                    'class':'form-control',
                                    'disabled':'true'
                                }))
+    multa = forms.CharField(label='Multa por Mora:',
+                            widget=forms.TextInput(attrs={
+                                'class':'form-control',
+                                'disabled':'true'
+                            }))
     socio = forms.CharField(label='Socio:',
                            widget=forms.TextInput(attrs={
                                    'class':'form-control',
@@ -44,7 +49,13 @@ class realizarLecturaForm(forms.Form):
     #     model=Lectura
     #     fields=('anterior','actual','fecha','mes','anio','socio')
 
-class lecturaForm(forms.ModelForm):
+class LecturaForm(forms.ModelForm):
     class Meta:
-        model=Lectura
-        fields=('anterior','actual','consumo','pagoconsumo','multa','pagototal','fecha','mes','anio','estado','socio')
+        model = Lectura
+        fields = '__all__'
+        # fields=('anterior','actual','consumo','pagoconsumo','multa','pagototal','fecha','mes','anio','estado','socio')
+
+class PrimeraLecturaForm(forms.ModelForm):
+    class Meta:
+        model = Lectura
+        fields = ('actual','fecha','socio')

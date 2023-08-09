@@ -1,0 +1,42 @@
+{% extends "../base.html" %}
+{% block main %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nº</th>
+            <th>Codigo</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>CI</th>
+            <th>Telefono</th>
+            <th>Celular</th>
+            <th>Direccion</th>
+            <th>Habilitado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for socio in socios %}
+        <tr>
+            <td></td>
+            <td>{{ socio.codigo }}</td>
+            <td>{{ socio.nombre }}</td>
+            <td>{{ socio.apellido }}</td>
+            <td>{{ socio.ci }}-{{ socio.expedito }}</td>
+            <td>{{ socio.telefono }}</td>
+            <td>{{ socio.celular }}</td>
+            <td>{{ socio.direccion }}</td>
+            <td>{{ socio.estado }}</td>
+            <td>
+                <a href="{% url 'editarsocio' socio.id %}">
+                    <button class="btn btn-outline-success bi-pencil-square"></button>
+                </a>
+                <a href="">
+                    <button class="btn btn-outline-danger bi-trash"></button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

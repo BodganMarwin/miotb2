@@ -14,14 +14,14 @@
     <div class="col-lg-6">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Realizar Lectura</h5>
+                <h5 class="card-title text-center">Realizar Lectura - {{ mes }}</h5>
                 <h6 class="card-title">{{ socio.codigo }} 
                     <span>
                         : {{ socio.nombre }} {{socio.apellido}}
                     </span>
                     {{ form.anio.value }}
                 </h6>
-                <form class="row g-3" action="" method="post">{% csrf_token %}
+                <form class="row g-3" action="" method="POST">{% csrf_token %}
                     {% for field in form %}
                     <div class="col-12">
                         <label class="form-label" for="{{ field.auto_id }}">{{field.label}}</label>

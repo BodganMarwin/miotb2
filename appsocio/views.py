@@ -58,13 +58,15 @@ class CrearSocioView(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
             return redirect('listarsocios')
         return render(request, self.template_name,{'form':self.form_class})
 
-class EditarSocioView(UpdateView):
+class EditarSocioView(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
+    permission_required = 'appsocio.update_socio'
     model = Socio
     form_class = SocioForm
     template_name = 'socio/crearsocio.html'
     success_url = reverse_lazy('listarsocios')
 
-class EliminarSocioView(DeleteView):
+class EliminarSocioView(LoginRequiredMixin,PermissionRequiredMixin,DeleteView):
+    permission_required = 'appsocio.delete_socio'
     model = Socio
     template_name = 'socio/eliminarSocio.html'
     success_url = reverse_lazy('listarsocios')

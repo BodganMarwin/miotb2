@@ -1,4 +1,5 @@
 from typing import Any
+from django.forms.models import BaseModelForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -7,6 +8,7 @@ from applectura.forms import *
 from appsocio.models import Socio
 from applectura.models import Lectura
 from datetime import date
+from .views import *
 # Create your views here.
 
 def buscarSocio(request):
@@ -28,14 +30,40 @@ def buscarSocio(request):
 
 class PrimeraLecturaView(CreateView):
     model = Lectura
+    # form_class = PrimeraLecturaForm(initial={'fecha':date.today().strftime('%d-%m-%Y')})
     form_class = PrimeraLecturaForm
     template_name = 'lectura/primeralectura.html'
     success_url = reverse_lazy('buscarSocio')
 
     def get(self, request, *args, **kwargs):
-        print(kwargs['pk'])
         socio = Socio.objects.get(id=kwargs['pk'])
-        return render(request,self.template_name,{'form':self.form_class,'socio':socio})
+        mes = mesAnterior(date.today().month)
+#        self.form_class.fecha = date.today().strftime('%d-%m-%Y')
+        return render(request,self.template_name,{'form':self.form_class,'socio':socio, 'mes':mes})
+    
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        socio = Socio.objects.get(id=kwargs['pk'])
+        mes = mesAnterior(date.today().month)
+        if form.is_valid():
+            lectura = Lectura(
+                anterior = 0,
+                actual= form.cleaned_data['actual'],
+                consumo = 0,
+                pagoconsumo = 0,
+                multa = 0,
+                pagototal = 0,
+                fecha = form.cleaned_data['fecha'],
+                mes = mes,
+                anio = anioMes(date.today().month-1),
+                estado = False,
+                socio = socio,
+            )
+            
+            print(lectura)
+            lectura.save()
+            return redirect(self.success_url)
+        return render(request,self.template_name,{'form':self.form_class,'socio':socio, 'mes':mes})
 
 def realizarLectura(request, pk):
     socio = Socio.objects.get(id=pk)

@@ -58,4 +58,8 @@ class LecturaForm(forms.ModelForm):
 class PrimeraLecturaForm(forms.ModelForm):
     class Meta:
         model = Lectura
-        fields = ('actual','fecha','socio')
+        fields = ('actual','fecha')
+        widgets = {
+            'actual': forms.TextInput(attrs={'class':'form-control'}),
+            'fecha': forms.DateInput(attrs={'class':'form-control', 'disabled':True}),
+        }

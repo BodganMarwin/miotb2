@@ -32,7 +32,7 @@ class Lectura(models.Model):
     socio = models.ForeignKey(Socio, on_delete=models.RESTRICT)
 
     def __str__(self):
-        return self.anio+' '+self.mes+' '+self.socio.codigo
+        return str(self.anio)+' '+self.mes+' '+self.socio.codigo
 
     class Meta:
         managed = True

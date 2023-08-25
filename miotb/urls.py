@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.decorators import login_required
 from applectura import views
-from apptroncal.views import crearCliente,crearServicio,crearGeo
 from appsocio.views import *
 from applectura.views import *
 
@@ -35,6 +34,7 @@ urlpatterns = [
     path('socio/listarsocio/', login_required(ListarSociosView.as_view()) , name='listarsocios'),
     path('socio/crearsocio/', login_required(CrearSocioView.as_view()) , name='crearsocio'),
     path('socio/editarsocio/<int:pk>/', login_required(EditarSocioView.as_view()) , name='editarsocio'),
+    path('socio/eliminarsocio/<int:pk>/', login_required(EliminarSocioView.as_view()) , name='eliminiarsocio'),
     path('lectura/lectura/<int:pk>', login_required(PrimeraLecturaView.as_view()) , name='primeralectura'),
     path('lectura/impimir/<int:pk>/', login_required(views.imprimirLectura) , name='imprimirLectura'),
 ]

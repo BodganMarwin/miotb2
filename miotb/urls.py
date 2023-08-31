@@ -20,6 +20,8 @@ from django.contrib.auth.decorators import login_required
 from applectura import views
 from appsocio.views import *
 from applectura.views import *
+from appcobrar import views
+from appcobrar.views import RealizarCobroViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,4 +39,6 @@ urlpatterns = [
     path('socio/eliminarsocio/<int:pk>/', login_required(EliminarSocioView.as_view()) , name='eliminiarsocio'),
     path('lectura/lectura/<int:pk>', login_required(PrimeraLecturaView.as_view()) , name='primeralectura'),
     path('lectura/impimir/<int:pk>/', login_required(views.imprimirLectura) , name='imprimirLectura'),
+    path('cobrar/buscarSocio/', login_required(views.buscarSocioCobrar) , name='buscarSocioCobrar'),
+    path('cobrar/realizarCobro/<int:pk>/', login_required(views.RealizarCobroViews.as_view()) , name='realizarCobro'),
 ]

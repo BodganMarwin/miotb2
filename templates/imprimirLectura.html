@@ -7,7 +7,17 @@
 </head>
 <body>
     <p>Realizar la impresion</p>
-    {{ lectura }}
-    {{ socio }}
+    <div class="text-center">
+        <h2 class="text-center">LECTURA DE AGUA</h2>
+        <h4>OTB SUCA OESTE</h4>
+        <p>Cod.: {{ lectura.socio.codigo }} Periodo: {{ lectura.mes }} - {{ lectura.anio }}</p>
+        <p>{{ lectura.socio.nombre }} {{ lectura.socio.apellido }}</p>
+        <p>Fecha de Emision: {{ lectura.fecha }}  Lec. Actual: {{ lectura.actual }} m3</p>
+        <p>Fecha Venc.       Cons. Actual: {{ lectura.consumo }} m3</p>
+        <div>DETALLE:</div>
+        <p>Consumo:................. {{ lectura.consumo }}</p>
+        <p>Multa:.................... {{ lectura.multa }}</p>
+    </div>
+    
 </body>
 </html>

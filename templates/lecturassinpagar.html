@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block main %}
+<section class="section row justify-content-center">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header text-center">
+                <h6 class="card-title">{{ socio.codigo }} 
+                    <span>
+                        : {{ socio.nombre }} {{socio.apellido}}
+                    </span>
+                    {{ form.anio.value }}
+                </h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Mes</th>
+                            <th scope="col">Anio</th>
+                            <th scope="col">Monto</th>
+                            <th scope="col">Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lectura in objetos %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ lectura.mes }}</td>
+                            <td>{{ lectura.anio }}</td>
+                            <td>{{ lectura.pagototal }}</td>
+                            <td>
+                                <a href="{% url 'realizarCobro' lectura.id %}">
+                                    <button class="btn btn-success">
+                                        Cobrar
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock main %}

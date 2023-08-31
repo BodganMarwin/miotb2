@@ -13,14 +13,15 @@
 <section class="section row justify-content-center">
     <div class="col-lg-6">
         <div class="card">
-            <div class="card-body">
-                <h5 class="card-title text-center">Realizar Lectura - {{ mes }}</h5>
+            <div class="card-header text-center">
                 <h6 class="card-title">{{ socio.codigo }} 
                     <span>
                         : {{ socio.nombre }} {{socio.apellido}}
-                    </span>
-                    {{ form.anio.value }}
+                    </span> 
                 </h6>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title text-center">Realizar Lectura - {{ mes }}</h5>
                 <form class="row g-3" action="" method="POST">{% csrf_token %}
                     {% for field in form %}
                     <div class="col-12">

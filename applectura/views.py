@@ -13,9 +13,11 @@ from .views import *
 
 def buscarSocio(request):
     form = buscarSocioForm()
+    
     allsocios = Socio.objects.all()
     mes = mesAnterior(date.today().month)
     anio = anioMes(date.today().month)
+    alllecturasmes = Lectura.objects.filter(anterior__gt=0,mes=mes,anio=anio)
     if request.method == 'POST':
         form = buscarSocioForm(request.POST)
         if form.is_valid:
@@ -23,10 +25,10 @@ def buscarSocio(request):
             socio = Socio.objects.get(id=id)
             try:
                 Lectura.objects.get(socio=socio,anio=anio,mes=mes)
-                return render(request, 'buscarSocio.html',{'socios':allsocios,'form':form})
+                return render(request, 'buscarSocio.html',{'objetos':alllecturasmes,'form':form, 'tipo':'Lectura','subtipo':'Realizar Lectura','accion':'Buscar Socio'})
             except Lectura.DoesNotExist:
                 return redirect('realizarLectura', pk=id)
-    return render(request, 'buscarSocio.html',{'socios':allsocios,'form':form})
+    return render(request, 'buscarSocio.html',{'objetos':alllecturasmes,'form':form,'tipo':'Lectura','subtipo':'Realizar Lectura','accion':'Buscar Socio'})
 
 class PrimeraLecturaView(CreateView):
     model = Lectura
@@ -38,7 +40,6 @@ class PrimeraLecturaView(CreateView):
     def get(self, request, *args, **kwargs):
         socio = Socio.objects.get(id=kwargs['pk'])
         mes = mesAnterior(date.today().month)
-#        self.form_class.fecha = date.today().strftime('%d-%m-%Y')
         return render(request,self.template_name,{'form':self.form_class,'socio':socio, 'mes':mes})
     
     def post(self, request, *args, **kwargs):
@@ -53,7 +54,7 @@ class PrimeraLecturaView(CreateView):
                 pagoconsumo = 0,
                 multa = 0,
                 pagototal = 0,
-                fecha = form.cleaned_data['fecha'],
+                fechaemision = date.today(),
                 mes = mes,
                 anio = anioMes(date.today().month-1),
                 estado = False,
@@ -89,7 +90,7 @@ def realizarLectura(request, pk):
         # anio = anioMes(getMes(ultima.mes))
         form = realizarLecturaForm(initial={
             'anterior':ultima.actual,
-            'fecha':fecha,
+            'fechaemision':fecha,
             'mes':mes,
             'anio':anio,
             'multa':calcularMulta(),
@@ -107,7 +108,7 @@ def realizarLectura(request, pk):
                     lectura.pagoconsumo=calcularConsumo(float(lectura.actual),float(lectura.anterior))
                     lectura.multa=calcularMulta()
                     lectura.pagototal=lectura.pagoconsumo+lectura.multa
-                    lectura.fecha=date.today()
+                    lectura.fechaemision=date.today()
                     lectura.mes=mes
                     lectura.anio=anio
                     lectura.estado=False
@@ -188,10 +189,15 @@ def calcularConsumo(actual, anterior):
 def calcularMulta():
     multa=0
     mesM=mesAnterior(date.today().month-2)
+
     anioM=anioMes(date.today().month-2)
-    lectura = Lectura.objects.get(anio=anioM,mes=mesM)
-    if lectura.estado==False:
-        multa=15
+    try:
+        lectura = Lectura.objects.get(anio=anioM,mes=mesM)
+    except Lectura.DoesNotExist:
+        lectura = None
+    if lectura:
+        if lectura.estado==False:
+            multa=15
     return multa
 
 def getMes(mes):

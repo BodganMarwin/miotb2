@@ -1,27 +1,17 @@
 {% extends "base.html" %}
 {% block main %}
-{% comment %} {{ socio }} {% endcomment %}
-<div class="pagetitle">
-    <h1>Lectura</h1>
-    <nav>
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="">Inicio</a></li>
-        <li class="breadcrumb-item">Realizar Lectura</li>
-        <li class="breadcrumb-item active">Realizar Lectura</li>
-      </ol>
-    </nav>
-</div><!-- End Page Title -->
 <section class="section row justify-content-center">
     <div class="col-lg-6">
         <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Realizar Lectura</h5>
+            <div class="card-header text-center">
                 <h6 class="card-title">{{ socio.codigo }} 
                     <span>
                         : {{ socio.nombre }} {{socio.apellido}}
-                    </span>
-                    {{ form.anio.value }}
+                    </span> 
                 </h6>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Realizar Lectura</h5>
                 <form class="row g-3" action="" method="post">{% csrf_token %}
                     {% for field in form %}
                     <div class="col-12">

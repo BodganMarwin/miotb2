@@ -310,7 +310,8 @@
         </a>
         <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="">
+          
+            <a href="{% url 'buscarSocioCobrar' %}">
               <i class="bi bi-circle"></i><span>Realizar Cobro</span>
             </a>
           </li>
@@ -349,16 +350,17 @@
   </aside><!-- End Sidebar-->
 
   <main id="main" class="main">
-    {% block main %}
     <div class="pagetitle">
-      <h1>Inicio</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Inicio/<li>
-        </ol>
-      </nav>
+      <h1>{{ tipo }}</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="">Inicio</a></li>
+            <li class="breadcrumb-item">{{ subtipo }}</li>
+            <li class="breadcrumb-item active">{{ accion }}</li>
+          </ol>
+        </nav>
     </div><!-- End Page Title -->
+    {% block main %}
     <section class="section dashboard">
       <div class="row">
         <!-- Left side columns -->

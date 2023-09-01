@@ -19,13 +19,13 @@ class ListarSociosView(LoginRequiredMixin,PermissionRequiredMixin,ListView):
 
     def get(self, request, *args, **kwargs):
         socios = Socio.objects.filter(estado=True)
-        return render(request,self.template_name,{'socios':socios})
+        return render(request,self.template_name,{'socios':socios, 'tipo':'Socio', 'subtipo':'Ver Socios','accion':'Socios'})
     
 class CrearSocioView(LoginRequiredMixin,PermissionRequiredMixin,CreateView):
     permission_required = 'appsocio.add_socio'
     model = Socio
     form_class = SocioForm
-    template_name = 'socio/crearsocio.html'
+    template_name = 'socio/socio.html'
     success_url = reverse_lazy('listarsocios')
     
     def post(self, request: HttpRequest, *args: str, **kwargs: Any):

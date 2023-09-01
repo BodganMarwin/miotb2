@@ -1,42 +1,105 @@
 {% extends "../base.html" %}
 {% block main %}
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nº</th>
-            <th>Codigo</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>CI</th>
-            <th>Telefono</th>
-            <th>Celular</th>
-            <th>Direccion</th>
-            <th>Habilitado</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for socio in socios %}
-        <tr>
-            <td></td>
-            <td>{{ socio.codigo }}</td>
-            <td>{{ socio.nombre }}</td>
-            <td>{{ socio.apellido }}</td>
-            <td>{{ socio.ci }}-{{ socio.expedito }}</td>
-            <td>{{ socio.telefono }}</td>
-            <td>{{ socio.celular }}</td>
-            <td>{{ socio.direccion }}</td>
-            <td>{{ socio.estado }}</td>
-            <td>
-                <a href="{% url 'editarsocio' socio.id %}">
-                    <button class="btn btn-outline-success bi-pencil-square"></button>
-                </a>
-                <a href="{% url 'eliminiarsocio' socio.id %}">
-                    <button class="btn btn-outline-danger bi-trash"></button>
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<section class="section">
+    <div class="row">
+        <div class="col">
+            <div class="card-sm-3">
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+				  Launch demo modal
+				</button>
+
+				<!-- Modal -->
+				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					  </div>
+					  <div class="modal-body">
+						...
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Save changes</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+
+
+                <button type="button" class="btn btn-success"  onclick="abrir_modal_crear('{% url 'crearsocio' %}')">
+                    Nuevo Socio
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <table class="table table-striped" id="table">
+                    <thead>
+                        <tr>
+                            <th>Nº</th>
+                            <th>Codigo</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>CI</th>
+                            <th>Telefono</th>
+                            <th>Celular</th>
+                            <th>Direccion</th>
+                            <th>Habilitado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for socio in socios %}
+                        <tr>
+                            <td></td>
+                            <td>{{ socio.codigo }}</td>
+                            <td>{{ socio.nombre }}</td>
+                            <td>{{ socio.apellido }}</td>
+                            <td>{{ socio.ci }}-{{ socio.expedito }}</td>
+                            <td>{{ socio.telefono }}</td>
+                            <td>{{ socio.celular }}</td>
+                            <td>{{ socio.direccion }}</td>
+                            <td>{{ socio.estado }}</td>
+                            <td>
+                                <a href="{% url 'editarsocio' socio.id %}">
+                                    <button class="btn btn-outline-success bi-pencil-square"></button>
+                                </a>
+                                <a href="{% url 'eliminiarsocio' socio.id %}">
+                                    <button class="btn btn-outline-danger bi-trash"></button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="crear" role="dialog"></div>
+
 {% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+const myModal = document.getElementById('myModal')
+const myInput = document.getElementById('myInput')
+
+myModal.addEventListener('shown.bs.modal', () => {
+  myInput.focus()
+})
+
+	var $ = jQuery.noConflict();
+    function abrir_modal_crear(url){
+        $('#crear').load(url,function(){
+            $(this).modal('show');
+        });
+    }
+</script>
+{% endblock js %}

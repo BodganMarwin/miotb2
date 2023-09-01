@@ -66,9 +66,9 @@
                             <td>{{ socio.direccion }}</td>
                             <td>{{ socio.estado }}</td>
                             <td>
-                                <a href="{% url 'editarsocio' socio.id %}">
-                                    <button class="btn btn-outline-success bi-pencil-square"></button>
-                                </a>
+                                {% comment %} <a href="{% url 'editarsocio' socio.id %}"> {% endcomment %}
+                                    <button class="btn btn-outline-success bi-pencil-square" onclick="abrir_modal_crear('{% url 'editarsocio' socio.id %}')"></button>
+                                {% comment %} </a> {% endcomment %}
                                 <a href="{% url 'eliminiarsocio' socio.id %}">
                                     <button class="btn btn-outline-danger bi-trash"></button>
                                 </a>

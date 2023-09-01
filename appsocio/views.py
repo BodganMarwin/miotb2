@@ -62,7 +62,7 @@ class EditarSocioView(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
     permission_required = 'appsocio.update_socio'
     model = Socio
     form_class = SocioForm
-    template_name = 'socio/crearsocio.html'
+    template_name = 'socio/socio.html'
     success_url = reverse_lazy('listarsocios')
 
 class EliminarSocioView(LoginRequiredMixin,PermissionRequiredMixin,DeleteView):
